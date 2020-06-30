@@ -1,7 +1,7 @@
 import os
 import subprocess
 from .parser import recreate_asm
-from elfpatch.map import parse_map
+from .map import parse_map
 
 def split_part(parsed):
     splited = []
