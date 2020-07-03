@@ -9,7 +9,7 @@ def cpp_to_assembly(cpp_code, gpp):
         "-S",
         "-fno-asynchronous-unwind-tables",
         "-fno-dwarf2-cfi-asm",
-        "-O0"
+        "-O3"
     ]
     # generate code.cpp
     code_cpp_path = tmp_dir.register_file("code.cpp")
