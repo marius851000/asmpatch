@@ -85,9 +85,9 @@ def get_metadata_object(splited, object_path, executable_ld, end_offset, dir):
 
     map_data = parse_map(map_content)
     if start_at_end:
-        map_data["new_end"] = hex(int(start, 16) + map_data["lenght"])
+        map_data["new_end"] = hex(int(end_offset, 16) + map_data["lenght"])
     else:
-        map_data["new_end"] = start
+        map_data["new_end"] = end_offset
     return map_data
 
 def generate_binary_patch(object_path, globals, offset, executable_ld, dir):
