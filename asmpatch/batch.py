@@ -1,13 +1,16 @@
 import tempfile
 import struct
 import yaml
+import os
 from .parser import parse_asm
 from .patch import split_part, generate_object, get_metadata_object, generate_binary_patch
+from .util import read_file
 
 #TODO: use and abuse of map reduce
 def batchpatch(
     gas_path,
     gld_path,
+    gpp_path,
     end_offset,
     input_name,
     out_prefix = "",
@@ -15,19 +18,14 @@ def batchpatch(
     input_prefix = "",
     input_suffix = ".asm"
 ):
-    files_content = []
 
-    for file_name in input_name:
-        f = open(input_prefix + file_name + input_suffix)
-        c = f.read()
-        f.close()
-        files_content.append(c)
-
-    # split files
-    print("splitting the different function")
     splited = []
-    for file in files_content:
-        parsed = parse_asm(file)
+    print("reading/splitting the different function")
+    for file_name in input_name:
+        file_path = input_prefix + file_name + input_suffix
+        content = read_file(file_path)
+        dir_path = os.path.dirname(file_path)
+        parsed = parse_asm(content, dir_path, gpp_path)
         splited.append(split_part(parsed))
 
     # generate object file

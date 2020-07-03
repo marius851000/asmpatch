@@ -1,6 +1,12 @@
-def parse_asm(content):
+import os
+from .util import read_file
+from .cpp import cpp_to_assembly
+
+def parse_asm(content, file_folder, gpp):
     result = []
-    for line in content.split("\n"):
+    lines = content.split("\n")
+    while len(lines) > 0:
+        line = lines.pop(0)
         # clean the line
         if line == "":
             continue
@@ -55,6 +61,17 @@ def parse_asm(content):
                 line_result["category"] = "comment"
         else:
             if operands[0][0] == ".":
+                if operands[0] == ".include_cpp": # special case: transform a cpp to asm, and then include it.
+                    if len(operands) != 2:
+                        raise BaseException("the command .include_cpp should have exactly one argument")
+                    cpp_file_path = os.path.join(file_folder, operands[1])
+                    print("adding the file {}".format(cpp_file_path))
+                    cpp_code = read_file(cpp_file_path)
+                    assembly_code = cpp_to_assembly(cpp_code, gpp).split("\n")
+                    assembly_code.extend(lines)
+                    lines = assembly_code
+                    continue
+                    
                 line_result["category"] = "command"
                 line_result["name"] = operands[0]
                 if len(operands) == 1:

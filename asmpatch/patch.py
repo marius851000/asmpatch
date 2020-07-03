@@ -42,7 +42,7 @@ def enumerate_global(parsed):
     globals = []
     for part in parsed:
         if part["category"] == "command":
-            if part["name"] == ".global":
+            if part["name"] == ".global" or part["name"] == ".globl":
                 if len(part["parameter"]) != 1:
                     raise Exception("ASM: .global should have exactly one operand")
                 globals.append(part["parameter"][0])
@@ -77,8 +77,7 @@ def get_metadata_object(splited, object_path, executable_ld, end_offset, dir):
 
     # create .map file
     tempory_map_path = os.path.join(dir, "map.map")
-    subprocess.run([executable_ld, "-Ttext", start, "--oformat=binary", "-T", empty_ld_path, "-Map="+tempory_map_path, object_path])
-
+    subprocess.run([executable_ld, "-Ttext", start, "--no-demangle", "--oformat=binary", "-T", empty_ld_path, "-Map="+tempory_map_path, object_path])
     # read .map file
     tempory_map_file = open(tempory_map_path)
     map_content = tempory_map_file.read()
@@ -96,7 +95,7 @@ def generate_binary_patch(object_path, globals, offset, executable_ld, dir):
     ld_path = os.path.join(dir, "linker.ld")
     ld_file = open(ld_path, "w")
     for g in globals:
-        ld_file.write("{} = {};".format(g, globals[g]))
+        ld_file.write("{} = {};\n".format(g, globals[g]))
     ld_file.close()
 
     # generate the .bin file
