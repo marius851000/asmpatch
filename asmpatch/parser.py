@@ -71,6 +71,8 @@ def parse_asm(content, file_folder, gpp):
                     assembly_code.extend(lines)
                     lines = assembly_code
                     continue
+                if operands[0] == ".section": #ignore section -- all the code is wrote in the same one
+                    continue
 
                 line_result["category"] = "command"
                 line_result["name"] = operands[0]
