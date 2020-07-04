@@ -2,14 +2,15 @@ import subprocess
 import os
 from .util import tempory_folder, read_file, write_file
 
-def cpp_to_assembly(cpp_code, gpp):
+def cpp_to_assembly(cpp_code, include_dir, gpp):
     tmp_dir = tempory_folder()
 
     gpp_flags = [
         "-S",
         "-fno-asynchronous-unwind-tables",
         "-fno-dwarf2-cfi-asm",
-        "-O3"
+        "-O3",
+        "-I" + include_dir
     ]
     # generate code.cpp
     code_cpp_path = tmp_dir.register_file("code.cpp")
