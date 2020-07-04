@@ -7,7 +7,7 @@ patch_to_merge = [ "custom_funcs", "apply_changes" ]
 patched_bytes = {} # offset: value (1 byte)
 
 for patch_name in patch_to_merge:
-    patch_path = patch_name + "_diff.txt"
+    patch_path = "./build/" + patch_name + "_diff.txt"
     f = open(patch_path)
     parsed_file = yaml.load(f)
     f.close()
