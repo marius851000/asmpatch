@@ -46,7 +46,7 @@ def batchpatch(
 
     # generate and read map file. Embed true offset position, and global
     #TODO: check and merge overwrite
-    print("generating map file (metadata)")
+    print("generating map file (metadata) (undefined reference can be ignored)")
     objects_pass_two = []
     globals = {}
     for patch in objects:
@@ -67,7 +67,7 @@ def batchpatch(
         objects_pass_two.append(tmp_pass_two)
 
     # generate patches files
-    print("generating patches")
+    print("generating patches (undefined reference *should* not be ignored)")
     for file_nb in range(len(input_name)):
         file_name = input_name[file_nb]
         print("  for {}".format(file_name))
