@@ -15,3 +15,6 @@ TODO:
 - allow .org {name}, where name is a indicated before the execution of the program
 - create a tempory dir by function
 - documentation
+- use the g++ flag to have only one section
+- use a logging library, transform all warning into true warning.
+- a proper command line
