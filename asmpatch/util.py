@@ -12,8 +12,8 @@ class tempory_folder:
             print("using the temporary folder {} .".format(TEMPORARY_FOLDER_PATH))
 
         if type(debug_path) == tuple:
-            debug_path = os.path.join(debug_path[0], os.path.abspath(debug_path[1])[1:])
-            
+            debug_path = os.path.join(debug_path[0], debug_path[1])
+
         if TEMPORARY_FOLDER_PATH != None:
             self.folder = os.path.join(TEMPORARY_FOLDER_PATH, debug_path)
             if os.path.isdir(self.folder):
