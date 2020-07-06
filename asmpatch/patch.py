@@ -105,6 +105,7 @@ def get_metadata_object(splited, object_bin, name, loop_nb, executable_ld, end_o
     tempory_map_file.close()
 
     map_data = parse_map(map_content)
+    map_data["correct_start"] = start
     if start_at_end:
         map_data["new_end"] = end_offset + map_data["lenght"]
     else:

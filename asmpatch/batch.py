@@ -64,23 +64,19 @@ def batchpatch(
     print("generating map file (metadata) (undefined reference can be ignored)")
     objects_pass_two = []
     for (patch, name) in zip(objects, input_name):
-        tmp_pass_two = []
+        objects_pass_two.append([])
         loop_nb = 0
         for section in patch:
-            #TODO: clean this part
-            start_offset = section["data"]["start"]
-            if start_offset == "end":
-                start_offset = actual_end_offset
             meta = get_metadata_object(section["data"], section["object_bin"], name, loop_nb, gld_path, actual_end_offset)
-            actual_section_data = {}
-            actual_section_data["object_bin"] = section["object_bin"]
-            actual_section_data["start"] = start_offset
+            actual_section_data = {
+                "object_bin": section["object_bin"],
+                "start": meta["correct_start"],
+            }
             actual_end_offset = meta["new_end"]
-            tmp_pass_two.append(actual_section_data)
+            objects_pass_two[-1].append(actual_section_data)
             for g in meta["offsets"]:
                 globals[g] = meta["offsets"][g]
             loop_nb += 1
-        objects_pass_two.append(tmp_pass_two)
 
     # generate patches files
     print("generating patches (undefined reference should *not* be ignored)")
