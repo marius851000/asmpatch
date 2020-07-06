@@ -1,23 +1,22 @@
-from asmpatch.batch import batchpatch
+from asmpatch.batchbuilder import BatchBuilder
+
 import os
 os.makedirs("./build", exist_ok=True)
 
-gas = "/nix/store/wqdf40jb3787wvi004rm1k6m2i1fsgyv-powerpc-none-eabi-stage-final-gcc-debug-wrapper-9.3.0/bin/powerpc-none-eabi-as"
-gld = "/nix/store/wqdf40jb3787wvi004rm1k6m2i1fsgyv-powerpc-none-eabi-stage-final-gcc-debug-wrapper-9.3.0/bin/powerpc-none-eabi-ld"
-gpp = "/nix/store/wqdf40jb3787wvi004rm1k6m2i1fsgyv-powerpc-none-eabi-stage-final-gcc-debug-wrapper-9.3.0/bin/powerpc-none-eabi-g++"
+import subprocess
+#TODO: cache, autofind, config file
 
-def transform_to_entry(name):
-    return ("./patches/"+name+".asm", "./build/"+name+"_diff.txt")
+
+
+batch = BatchBuilder()
+batch.set_end_offset(int("805954bc", 16)) #TODO: auto find end offset via elf file. Also auto add the linker file
+gcc_path = subprocess.check_output(["nix-build", "<nixpkgs>", "-A", "pkgs.pkgsCross.ppc-embedded.buildPackages.gcc", "--no-out-link"], encoding="ascii").split("\n")[0]
+# something like /nix/store/ps6pvl36wzsdcibxkyxm8wiy5qxkx87p-powerpc-none-eabi-stage-final-gcc-debug-wrapper-9.3.0, contain bin/powerpc-none-eabi-* files
+batch.with_gcc_path(gcc_path)
+batch.with_linker_file("patches/spyro06_ntsc.ld")
+for name in ["custom_funcs", "remove_optimization_for_freecam_ntsc", "apply_changes", "include_cpp"]:
+    batch.with_patch("./patches/{}.asm".format(name), "./build/{}_diff.txt".format(name))
 
 print("generating ...")
-batchpatch(
-    gas,
-    gld,
-    gpp,
-    int("805954bc", 16), #offset of the end of the file
-    #[ "custom_funcs", "remove_optimization_for_freecam_ntsc", "apply_changes", "include_cpp" ],
-    #[ "include_cpp" ],
-    map(transform_to_entry, ["custom_funcs", "remove_optimization_for_freecam_ntsc", "apply_changes", "include_cpp"]),
-    linker_files = [ "patches/spyro06_ntsc.ld" ],
-)
+batch.execute()
 print("done !")
