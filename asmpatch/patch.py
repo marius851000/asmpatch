@@ -2,7 +2,7 @@ import os
 import subprocess
 from .parser import recreate_asm
 from .map import parse_map
-from .util import tempory_folder
+from .util import tempory_folder, read_file, write_file
 
 def split_part(parsed):
     splited = []
@@ -55,9 +55,7 @@ def generate_object(splited, executable_as, name, loop_number):
     # .asm
     assembly = recreate_asm(splited["section"], with_comment=False)
     tempory_assembly_path = dir.register_file("assembly.asm")
-    tempory_assembly_file = open(tempory_assembly_path, "w")
-    tempory_assembly_file.write(assembly)
-    tempory_assembly_file.close()
+    write_file(tempory_assembly_path, assembly)
 
     # .o
     tempory_object_path = dir.register_file("object.o")
@@ -80,8 +78,7 @@ def get_metadata_object(splited, object_bin, name, loop_nb, executable_ld, end_o
     dir = tempory_folder(("map_file", os.path.join(name, str(loop_nb))))
     # create empty .ld file
     empty_ld_path = dir.register_file("empty.ld")
-    empty_ld_file = open(empty_ld_path, "w")
-    empty_ld_file.close()
+    write_file(empty_ld_path, "")
 
     # create object.o file
     object_path = dir.register_file("object.o")
@@ -100,9 +97,7 @@ def get_metadata_object(splited, object_bin, name, loop_nb, executable_ld, end_o
         "-Map=" + tempory_map_path,
         object_path])
     # read .map file
-    tempory_map_file = open(tempory_map_path)
-    map_content = tempory_map_file.read()
-    tempory_map_file.close()
+    map_content = read_file(tempory_map_path)
 
     map_data = parse_map(map_content)
     map_data["correct_start"] = start

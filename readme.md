@@ -12,11 +12,8 @@ this patcher use the gnu assembler. It should support most of its function. In a
 .global can accessed/defined by/from all the .asm file. I recommend you add a prefix to the patch, to prevent compatibility issue.
 
 TODO:
-- allow .org {name}, where name is a indicated before the execution of the program
 - documentation
 - use the g++ flag to have only one section
 - use a logging library, transform all warning into true warning.
 - a proper command line
-- check that read_file, write_file and split_line are used everywere it fit
-- ensure that offset are always int except for a good reason (no 0x... string)
 - a method that permit to check that the difference with/without a rewritten function is the same (idea: load a savestate just before the function start, save one when it finish. Do this with/without the custom function (the difference is just the b that doesn't replace the original function) and compare the memory !)

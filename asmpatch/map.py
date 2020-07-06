@@ -1,3 +1,5 @@
+from .util import split_line
+
 def parse_map(map_content):
     is_inside_section = False
     objects = {}
@@ -9,16 +11,7 @@ def parse_map(map_content):
                 is_inside_section = False
             continue
 
-        splited = []
-        actual_string = ""
-        line += " "
-        for chara in line:
-            if chara in [" ", "\t"]:
-                if actual_string != "":
-                    splited.append(actual_string)
-                    actual_string = ""
-            else:
-                actual_string += chara
+        splited = split_line(line)
 
         if splited[0] == "*fill*":
             continue
