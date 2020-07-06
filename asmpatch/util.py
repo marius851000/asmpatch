@@ -67,3 +67,17 @@ def read_file(file_path):
     c = f.read()
     f.close()
     return c
+
+def split_line(line):
+    splited = []
+    new_part = True
+    for chara in line:
+        if chara == " " or chara == "\t":
+            new_part = True
+        else:
+            if new_part:
+                splited.append(chara)
+                new_part = False
+            else:
+                splited[-1] += chara
+    return splited

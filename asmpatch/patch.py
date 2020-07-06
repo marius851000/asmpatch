@@ -91,7 +91,14 @@ def get_metadata_object(splited, object_bin, name, loop_nb, executable_ld, end_o
 
     # create .map file
     tempory_map_path = dir.register_file("map.map")
-    subprocess.run([executable_ld, "-Ttext", start, "--no-demangle", "--oformat=binary", "-T", empty_ld_path, "-Map="+tempory_map_path, object_path])
+    subprocess.run([
+        executable_ld,
+        "-Ttext", hex(start),
+        "--no-demangle",
+        "--oformat=binary",
+        "-T", empty_ld_path,
+        "-Map=" + tempory_map_path,
+        object_path])
     # read .map file
     tempory_map_file = open(tempory_map_path)
     map_content = tempory_map_file.read()
@@ -99,7 +106,7 @@ def get_metadata_object(splited, object_bin, name, loop_nb, executable_ld, end_o
 
     map_data = parse_map(map_content)
     if start_at_end:
-        map_data["new_end"] = hex(int(end_offset, 16) + map_data["lenght"])
+        map_data["new_end"] = end_offset + map_data["lenght"]
     else:
         map_data["new_end"] = end_offset
     dir.clean()
@@ -122,7 +129,14 @@ def generate_binary_patch(object_bin, globals, offset, name, loop_nb, executable
 
     # generate the .bin file
     bin_path = dir.register_file("bin.bin")
-    subprocess.run([executable_ld, "-Ttext", offset, "--oformat=binary", "-T", ld_path, object_path, "-o", bin_path])
+    subprocess.run([
+        executable_ld,
+        "-Ttext", hex(offset),
+        "--oformat=binary",
+        "-T", ld_path,
+        object_path,
+        "-o", bin_path,
+        "--no-demangle"])
 
     # read the .bin file
     bin_file = open(bin_path, "rb")

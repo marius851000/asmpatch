@@ -20,6 +20,9 @@ def parse_map(map_content):
             else:
                 actual_string += chara
 
+        if splited[0] == "*fill*":
+            continue
+
         if line[0] == ".": # section start
             section_name = splited[0]
             section_len = splited[2]
