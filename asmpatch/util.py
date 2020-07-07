@@ -24,7 +24,11 @@ class TemporyFolderBuilder:
 class tempory_folder:
     def __init__(self, debug_path, keep_folder = False, general_tempory_folder_path = None):
         if type(debug_path) == tuple:
-            debug_path = os.path.join(debug_path[0], os.path.abspath(debug_path[1])[1:])
+            absolute_path_of_parameter = os.path.abspath(debug_path[1])
+            if absolute_path_of_parameter[1] == ":": # windows like, start with {letter}:/... , we just want {letter}/...
+                debug_path = os.path.join(debug_path[0], absolute_path_of_parameter[0]+absolute_path_of_parameter[2:])
+            else:
+                debug_path = os.path.join(debug_path[0], absolute_path_of_parameter[1:])
 
         if general_tempory_folder_path != None:
             self.folder = os.path.join(general_tempory_folder_path, debug_path)
