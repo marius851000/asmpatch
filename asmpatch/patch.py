@@ -95,7 +95,9 @@ def get_metadata_object(splited, object_bin, name, loop_nb, executable_ld, end_o
         "--oformat=binary",
         "-T", empty_ld_path,
         "-Map=" + tempory_map_path,
-        object_path])
+        object_path],
+        stderr=subprocess.PIPE,
+        check=False).stderr
     # read .map file
     map_content = read_file(tempory_map_path)
 
