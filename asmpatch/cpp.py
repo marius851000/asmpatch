@@ -1,9 +1,9 @@
 import subprocess
 import os
-from .util import tempory_folder, read_file, write_file
+from .util import read_file, write_file
 
-def cpp_to_assembly(cpp_code, source_file, gpp):
-    tmp_dir = tempory_folder(("cpp_to_asm", os.path.abspath(source_file)[1:]))
+def cpp_to_assembly(cpp_code, source_file, gpp, tmp_builder):
+    tmp_dir = tmp_builder.build_tempory_folder(("cpp_to_asm", source_file))
 
     gpp_flags = [
         "-S",

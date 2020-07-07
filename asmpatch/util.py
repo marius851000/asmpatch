@@ -1,21 +1,33 @@
 import tempfile
 import os
 
-KEEP_TEMPORARY_FOLDER = True
-TEMPORARY_FOLDER_PATH = None
+class TemporyFolderBuilder:
+    def __init__(self):
+        self.keep_folder = False
+        self.general_tempory_folder_path = None
+
+    def set_keep_folder(self, keep_folder):
+        assert isinstance(keep_folder, bool)
+        self.keep_folder = keep_folder
+        if keep_folder:
+            if self.general_tempory_folder_path == None:
+                self.general_tempory_folder_path = tempfile.mkdtemp()
+            print("using the temporary folder {}".format(self.general_tempory_folder_path))
+
+    def build_tempory_folder(self, debug_path):
+        return tempory_folder(
+            debug_path,
+            self.keep_folder,
+            self.general_tempory_folder_path
+        )
 
 class tempory_folder:
-    def __init__(self, debug_path):
-        global TEMPORARY_FOLDER_PATH
-        if KEEP_TEMPORARY_FOLDER and TEMPORARY_FOLDER_PATH == None:
-            TEMPORARY_FOLDER_PATH = tempfile.mkdtemp()
-            print("using the temporary folder {} .".format(TEMPORARY_FOLDER_PATH))
-
+    def __init__(self, debug_path, keep_folder = False, general_tempory_folder_path = None):
         if type(debug_path) == tuple:
-            debug_path = os.path.join(debug_path[0], debug_path[1])
+            debug_path = os.path.join(debug_path[0], os.path.abspath(debug_path[1])[1:])
 
-        if TEMPORARY_FOLDER_PATH != None:
-            self.folder = os.path.join(TEMPORARY_FOLDER_PATH, debug_path)
+        if general_tempory_folder_path != None:
+            self.folder = os.path.join(general_tempory_folder_path, debug_path)
             if os.path.isdir(self.folder):
                 added_number = 0
                 while True:
@@ -30,6 +42,7 @@ class tempory_folder:
         else:
             self.folder = tempfile.mkdtemp()
         self.files = []
+        self.keep_folder = keep_folder
 
     def register_file(self, file_name):
         """indicate that a file is added to the tempory folder file (either just now or later). Return the path of the file."""
@@ -42,7 +55,7 @@ class tempory_folder:
         return self.folder
 
     def clean(self):
-        if KEEP_TEMPORARY_FOLDER:
+        if self.keep_folder:
             existing_file = os.listdir(self.folder)
             for file in self.files:
                 if file in existing_file:

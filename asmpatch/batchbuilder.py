@@ -1,5 +1,6 @@
 import os
 from .batch import batchpatch
+from .util import TemporyFolderBuilder
 
 class BatchBuilder: # a rust like builder for a batch
     def __init__(self):
@@ -9,6 +10,7 @@ class BatchBuilder: # a rust like builder for a batch
         self.gpp = None
         self.input_output_files = []
         self.linker_files = []
+        self.tmp_builder = TemporyFolderBuilder()
 
     def set_end_offset(self, end_offset):
         assert isinstance(end_offset, int)
@@ -48,6 +50,9 @@ class BatchBuilder: # a rust like builder for a batch
     def with_patch(self, input_path, output_path):
         self.input_output_files.append((input_path, output_path))
 
+    def with_tmp_builder(self, tmp_builder):
+        self.tmp_builder = tmp_builder
+
     def execute(self):
         errors = []
         if self.gas_path == None:
@@ -69,6 +74,7 @@ class BatchBuilder: # a rust like builder for a batch
             gld_path = self.gld_path,
             gpp_path = self.gpp_path,
             end_offset = self.end_offset,
+            tmp_builder = self.tmp_builder,
             input_output_files = self.input_output_files,
-            linker_files = self.linker_files
+            linker_files = self.linker_files,
         )

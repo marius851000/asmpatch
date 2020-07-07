@@ -12,6 +12,7 @@ def batchpatch(
     gld_path,
     gpp_path,
     end_offset,
+    tmp_builder,
     input_output_files,
     linker_files = [],
 ):
@@ -30,7 +31,7 @@ def batchpatch(
     for input_path in input_files:
         content = read_file(input_path)
         dir_path = os.path.dirname(input_path)
-        parsed = parse_asm(content, dir_path, gpp_path)
+        parsed = parse_asm(content, dir_path, gpp_path, tmp_builder)
         splited.append(split_part(parsed))
 
     # generate object file
@@ -41,7 +42,7 @@ def batchpatch(
         loop_counter = 0
         for section in patch:
             actual_object.append({
-                "object_bin": generate_object(section, gas_path, input_path, loop_counter),
+                "object_bin": generate_object(section, gas_path, input_path, loop_counter, tmp_builder),
                 "data": section
             })
             start = actual_object[-1]["data"]["start"]
@@ -66,7 +67,7 @@ def batchpatch(
         objects_pass_two.append([])
         loop_nb = 0
         for section in patch:
-            meta = get_metadata_object(section["data"], section["object_bin"], input_path, loop_nb, gld_path, actual_end_offset)
+            meta = get_metadata_object(section["data"], section["object_bin"], input_path, loop_nb, gld_path, actual_end_offset, tmp_builder)
             actual_section_data = {
                 "object_bin": section["object_bin"],
                 "start": meta["correct_start"],
@@ -84,7 +85,7 @@ def batchpatch(
         diffs = {}
         loop_nb = 0
         for data in datas:
-            patch_bin = generate_binary_patch(data["object_bin"], globals, data["start"], input_path, loop_nb, gld_path)
+            patch_bin = generate_binary_patch(data["object_bin"], globals, data["start"], input_path, loop_nb, gld_path, tmp_builder)
             diffs[data["start"]] = list(struct.unpack("B"*len(patch_bin), patch_bin))
             loop_nb += 1
         with open(output_path, "w") as f:

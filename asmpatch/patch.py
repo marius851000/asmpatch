@@ -2,7 +2,7 @@ import os
 import subprocess
 from .parser import recreate_asm
 from .map import parse_map
-from .util import tempory_folder, read_file, write_file
+from .util import read_file, write_file
 
 def split_part(parsed):
     splited = []
@@ -49,8 +49,8 @@ def enumerate_global(parsed):
                 globals.append(part["parameter"][0])
     return globals
 
-def generate_object(splited, executable_as, name, loop_number):
-    dir = tempory_folder(("build_object", os.path.join(name, str(loop_number))))
+def generate_object(splited, executable_as, name, loop_number, tmp_builder):
+    dir = tmp_builder.build_tempory_folder(("build_object", os.path.join(name, str(loop_number))))
     # create tempory file
     # .asm
     assembly = recreate_asm(splited["section"], with_comment=False)
@@ -69,13 +69,13 @@ def generate_object(splited, executable_as, name, loop_number):
     dir.clean()
     return object_bin
 
-def get_metadata_object(splited, object_bin, name, loop_nb, executable_ld, end_offset):
+def get_metadata_object(splited, object_bin, name, loop_nb, executable_ld, end_offset, tmp_builder):
     start = splited["start"]
     start_at_end = start == "end"
     if start_at_end:
         start = end_offset
 
-    dir = tempory_folder(("map_file", os.path.join(name, str(loop_nb))))
+    dir = tmp_builder.build_tempory_folder(("map_file", os.path.join(name, str(loop_nb))))
     # create empty .ld file
     empty_ld_path = dir.register_file("empty.ld")
     write_file(empty_ld_path, "")
@@ -108,8 +108,8 @@ def get_metadata_object(splited, object_bin, name, loop_nb, executable_ld, end_o
     dir.clean()
     return map_data
 
-def generate_binary_patch(object_bin, globals, offset, name, loop_nb, executable_ld):
-    dir = tempory_folder(("binary_patch", os.path.join(name, str(loop_nb))))
+def generate_binary_patch(object_bin, globals, offset, name, loop_nb, executable_ld, tmp_builder):
+    dir = tmp_builder.build_tempory_folder(("binary_patch", os.path.join(name, str(loop_nb))))
     # create linker.ld file
     ld_path = dir.register_file("linker.ld")
     ld_file = open(ld_path, "w")
