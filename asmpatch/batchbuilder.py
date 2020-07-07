@@ -23,9 +23,13 @@ class BatchBuilder: # a rust like builder for a batch
         suffix_to_look_for = [ "as", "ld", "g++" ]
         executables = {}
         for executable in gcc_executables:
+            if executable.endswith(".exe"):
+                normalized_executable = executable[0:-4]
+            else:
+                normalized_executable = executable
             for suffix in suffix_to_look_for:
-                if executable.endswith(suffix):
-                    if executable.endswith("ld.gold") or executable.endswith("ld.bfd"): #endswith sometime allow those two with endswith("ld")
+                if normalized_executable.endswith(suffix):
+                    if normalized_executable.endswith("ld.gold") or normalized_executable.endswith("ld.bfd"): #endswith sometime allow those two with endswith("ld")
                         continue
                     executables[suffix] = os.path.join(gcc_bin_path, executable)
 
