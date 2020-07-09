@@ -18,7 +18,7 @@ batch.with_linker_file("patches/spyro06_ntsc.ld")
 tmp_folder = TemporyFolderBuilder()
 tmp_folder.set_keep_folder(True)
 batch.with_tmp_builder(tmp_folder)
-for name in ["custom_funcs", "remove_optimization_for_freecam_ntsc", "apply_changes", "include_cpp"]:
+for name in [ "remove_optimization_for_freecam_ntsc", "change_rot_charge_speed", "include_cpp"]:
     batch.with_patch("./patches/{}.asm".format(name), "./build/{}_diff.txt".format(name))
 
 print("generating ...")

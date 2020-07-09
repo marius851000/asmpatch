@@ -3,7 +3,7 @@ import yaml
 import os
 from .parser import parse_asm
 from .patch import split_part, generate_object, get_metadata_object, generate_binary_patch
-from .util import read_file
+from .util import read_file, parse_hex_to_int
 from .linker import read_linker_files
 
 #TODO: use and abuse of map reduce
@@ -46,13 +46,32 @@ def batchpatch(
                 "data": section
             })
             start = actual_object[-1]["data"]["start"]
+
+            splited_by = {
+                "+": start.split("+"),
+                "-": start.split("-")
+            }
+
+            diff = 0
+            for splited_char in splited_by:
+                if len(splited_by[splited_char]) > 2:
+                    raise BaseException("no more than one {} can be present on a line, to indicate a difference in the offset.".format(splited_char))
+                if len(splited_by[splited_char]) == 2:
+                    if diff != 0:
+                        raise BaseException("there can't be a + and - in the same line (to indicate a difference in the offset).")
+                    diff_string = splited_by[splited_char][1]
+                    diff = parse_hex_to_int(diff_string)
+                    if splited_char == "-":
+                        diff = -diff
+                    start = splited_by[splited_char][0]
+
             if start in globals:
-                actual_object[-1]["data"]["start"] = globals[start]
+                actual_object[-1]["data"]["start"] = globals[start]+diff
+
             elif isinstance(start, str) and start != "end":
-                if len(start) >= 2:
-                    if start[0:1] == "0x":
-                        start = start[2:]
-                actual_object[-1]["data"]["start"] = int(start, 16)
+                if diff != 0:
+                    raise BaseException("no diff can be accepted when there is just an offset (the offset is {}).".format(start))
+                actual_object[-1]["data"]["start"] = parse_hex_to_int(start)
 
             loop_counter += 1
         objects.append(actual_object)

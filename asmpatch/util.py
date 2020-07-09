@@ -98,3 +98,10 @@ def split_line(line):
             else:
                 splited[-1] += chara
     return splited
+
+
+def parse_hex_to_int(nb_str):
+    if len(nb_str) >= 2:
+        if nb_str[0:1] == "0x":
+            nb_str = nb_str[2:]
+    return int(nb_str, 16)
