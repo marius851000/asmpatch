@@ -15,13 +15,13 @@ class TemporyFolderBuilder:
             print("using the temporary folder {}".format(self.general_tempory_folder_path))
 
     def build_tempory_folder(self, debug_path):
-        return tempory_folder(
+        return TemporyFolder(
             debug_path,
             self.keep_folder,
             self.general_tempory_folder_path
         )
 
-class tempory_folder:
+class TemporyFolder:
     def __init__(self, debug_path, keep_folder = False, general_tempory_folder_path = None):
         if type(debug_path) == tuple:
             absolute_path_of_parameter = os.path.abspath(debug_path[1])
