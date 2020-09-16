@@ -3,6 +3,9 @@ import os
 from .util import read_file, write_file
 
 def cpp_to_assembly(cpp_code, source_file, gpp, tmp_builder):
+    '''
+    tranform the cpp code contained in the str in sourec_file to a String that contain the generated assembly code
+    '''
     tmp_dir = tmp_builder.build_tempory_folder(("cpp_to_asm", source_file))
 
     gpp_flags = [
