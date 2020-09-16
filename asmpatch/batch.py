@@ -16,6 +16,17 @@ def batchpatch(
     input_output_files,
     linker_files = [],
 ):
+    '''
+    process a serie of assembly file, and generate a compiled patch for each assembly file, that should each be compatible
+
+    inputs:
+    gas_path: path to gnu as for the target architecture
+    gld_path: path to gnu ld for the target architecture
+    gpp_path: path to gnu++ (gpp) for the target architecture
+    end_offset: the final offset of the source file. Any value after this offset can have an arbitary value without changing the normal patched program execution
+    tmp_builder: an instance of TemporyFolderBuilder, used to store tempory data in a folder
+    input_output_files: a list of tuple (a la Vec<(String, String)>), that list the input and output for each patch. the first element of the tuple is input_file, and is a path to an assembly file. The second element of the tuple is the path to the generated patch (in the yaml format).
+    linker_files: a path to a linker file, who will be avalaible as global in the assembly file'''
 
     input_files = []
     output_files = []
